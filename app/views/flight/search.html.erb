@@ -1,0 +1,24 @@
+<h1> Find Ticket </h1>
+
+  <%= form_for @flight_find do |f| %>
+    Airport<br>
+    From <%= collection_select(:airport, :airport_id, Airport.all, :id, :code) %><br>
+    To <%= collection_select(:airport, :airport_id, Airport.all, :id, :code) %><br>
+    Date <%= select_date Date.today, prefix: :start_date %>
+    <%= f.submit "refine available flights" %>
+  <% end %>
+
+<p>available flights:</p>
+
+<% if false %>
+# form_for (collection drop down) #
+http://guides.rubyonrails.org/form_helpers.html
+https://stackoverflow.com/questions/6191352/rails-form-for-with-collection-select
+
+# -solution to list all airports-
+<% airport_array = Airport.all.map { |airport| [airport.code, airport.id] } %>
+<%= options_for_select(airport_array) %>
+------------------------------------------------------------------
+<%= options_from_collection_for_select(Airport.all, :id, :name) %>
+
+<% end %>

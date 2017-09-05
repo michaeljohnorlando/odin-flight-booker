@@ -1,17 +1,32 @@
 <h1> Find Ticket </h1>
 
-  <%= form_for @flight_find do |f| %>
+  <%= form_for @flight_find, method: "get" do |f| %>
     Airport<br>
-    From <%= collection_select(:airport, :airport_id, Airport.all, :id, :code) %><br>
-    To <%= collection_select(:airport, :airport_id, Airport.all, :id, :code) %><br>
-    Date <%= select_date Date.today, prefix: :start_date %>
+    <%= f.label :From %>: 
+    <%= f.collection_select :departure_id, Airport.all, :id, :code, prompt: true %><br>
+
+    
+    <%= f.label :To %>: 
+    <%= f.collection_select :arrival_id, Airport.all, :id, :code, prompt: true %><br>
+    
+    <%= label_tag(:departure_date, "date") %> 
+    <%= date_field(:date, :departure_date) %><br><br>
+    
     <%= f.submit "refine available flights" %>
   <% end %>
-
-<p>available flights:</p>
-
-
-
+  
+    <p>available flights:</p>
+  <% if @flights != nil %>
+    <%= form_tag({:method => "get"}) do %>
+      <% @flights.each do |flight| %>
+      <%= radio_button_tag(:flight, flight) %>
+        From: <%= (Airport.find_by id: flight.departure_id).name %>
+        // To: <%= (Airport.find_by id: flight.arrival_id).name %>
+        // Departing at: <%= flight.departure_time %><br>
+      <% end %>
+      <%= submit_tag("select flight")  %>
+    <% end %>
+  <% end %>
 
 
 
@@ -23,10 +38,30 @@
 http://guides.rubyonrails.org/form_helpers.html
 https://stackoverflow.com/questions/6191352/rails-form-for-with-collection-select
 
-# -solution to list all airports-
-<% airport_array = Airport.all.map { |airport| [airport.code, airport.id] } %>
-<%= options_for_select(airport_array) %>
-------------------------------------------------------------------
-<%= options_from_collection_for_select(Airport.all, :id, :name) %>
+## -solution to list all airports- ##
+  <% airport_array = Airport.all.map { |airport| [airport.code, airport.id] } %>
+  <%= options_for_select(airport_array) %>
+  ------------------------------------------------------------------
+  <%= options_from_collection_for_select(Flight.all, :id, :departure_time) %>
+
+## get the correct params from the form ##
+  https://stackoverflow.com/questions/27136478/undefined-method-merge-for-namesymbol-rails-4-1-x-collection-select
+  https://apidock.com/rails/ActionView/Helpers/FormBuilder/collection_select
+
+## needed to do a to_i  ##
+<% puts " departure_id:#{flight.departure_id} search_id:#{@flight_refine[:departure_id]}" %>
+
+## way to search fligts... ##
+<% Flight.all.each do |flight| %>
+  <% if flight.departure_id.to_i == @flight_refine[:departure_id].to_i %>
+  departure airport: <%= (Airport.find_by id: flight.departure_id).name %><br>
+  arrival airport:   <%= (Airport.find_by id: flight.arrival_id).name   %><br>
+  departure_time:    <%= flight.departure_time %><br>
+  arrival_time:      <%= flight.arrival_time %><br>
+  <br><br>
+  <%end%>
+<% end %>
+
+## 
 
 <% end %>

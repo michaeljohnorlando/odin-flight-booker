@@ -7,7 +7,6 @@
 
 #cheap trick for deleteing the current database by modle
 Airport.delete_all
-
 # add airports
 Airport.create([
   { name: 'Los Angeles',   code: 'LAX' },
@@ -15,24 +14,25 @@ Airport.create([
   { name: 'San Francisco', code: 'SFO' },
 ])
 
-
+Flight.delete_all
+# add 10 flights
+ 10.times {Flight.create([
+   { departure_id:   Airport.order("RANDOM()").first.id,
+     arrival_id:     Airport.order("RANDOM()").first.id,
+     departure_time: Date.new(2017,Random.new.rand(1..12),Random.new.rand(1..30)),
+     arrival_time:   Date.new(2017,Random.new.rand(1..12),Random.new.rand(1..30)),
+   }
+ ])}
+ 
+ 
 =begin
  a good way to do a comment block of code...
 
-Flight.delete_all
- # add flights
- Flight.create([
-   { departure_id: Airport.order("RANDOM()").first.id,
-     arrival_id: Airport.order("RANDOM()").first.id,
-     # departure_time: rand(1.years).from_now,
-     # arrival_time: rand(1.years).from_now,
-   }
-
+# random dates...
 random_year = Random.new.rand(2000..2014) # custom range for years
 random_month =Random.new.rand(1..12)
 random_day  = Random.new.rand(1..30)
 puts "#{Date.new(random_year,random_month,random_day)}"
- ])
 
 # getting a random record from a table
 https://stackoverflow.com/questions/5342270/rails-3-get-random-record
